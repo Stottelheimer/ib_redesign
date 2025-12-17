@@ -173,11 +173,11 @@ export function Settings() {
                   )}
                 />
 
-                <div className="pt-4">
-                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                    Save Changes
-                  </Button>
-                </div>
+                  <div className="pt-4">
+                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      Save Changes
+                    </Button>
+                  </div>
               </Form>
             </div>
           </Card>

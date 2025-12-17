@@ -91,9 +91,9 @@ export function Login() {
 
           <Form form={form} onSubmit={onSubmit} className="space-y-6">
             <FormField
-              name="email"
               control={form.control}
-              render={({ field }) => (
+              name="email"
+            render={({ field }) => (
                 <FormItem>
                   <FormLabel>E-Mail</FormLabel>
                   <FormControl>
@@ -164,7 +164,7 @@ export function Login() {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-full transition-colors"
             >
               {isSubmitting ? 'Logging in...' : 'Log in'}
-            </Button>
+              </Button>
           </Form>
 
           <div className="flex items-center justify-center gap-2 text-sm">
