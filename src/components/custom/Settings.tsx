@@ -4,18 +4,11 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useForm,
-} from '@/components/ui/form'
+import { Field, FieldLabel, FieldError } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Sidebar } from './Sidebar'
 
@@ -99,86 +92,65 @@ export function Settings() {
                 <p className="text-sm text-slate-600">Text unten drunter welcher alles erklärt</p>
               </div>
 
-              <Form form={form} onSubmit={onSubmit} className="space-y-4">
-                <FormField
-                  name="name"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter your name..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <Field data-invalid={!!form.formState.errors.name}>
+                  <FieldLabel htmlFor="name">Name</FieldLabel>
+                  <Input
+                    id="name"
+                    placeholder="Enter your name..."
+                    {...form.register('name')}
+                  />
+                  <FieldError errors={form.formState.errors.name ? [form.formState.errors.name] : []} />
+                </Field>
 
-                <FormField
-                  name="email"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>E-mail address</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="Enter your e-mail address..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <Field data-invalid={!!form.formState.errors.email}>
+                  <FieldLabel htmlFor="email">E-mail address</FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your e-mail address..."
+                    {...form.register('email')}
+                  />
+                  <FieldError errors={form.formState.errors.email ? [form.formState.errors.email] : []} />
+                </Field>
 
-                <FormField
-                  name="category"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <div className="relative">
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="w-full h-9 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 appearance-none cursor-pointer hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                            <option value="">Choose a category</option>
-                            {categories.map((cat) => (
-                              <option key={cat.value} value={cat.value}>
-                                {cat.label}
-                              </option>
-                            ))}
-                          </select>
-                        </FormControl>
-                        <ChevronDown className="absolute right-3 top-2.5 w-4 h-4 text-slate-500 pointer-events-none" />
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  name="message"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Message</FormLabel>
-                      <FormControl>
-                        <textarea
-                          {...field}
-                          placeholder="Type your message here."
-                          className="w-full h-20 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                  <div className="pt-4">
-                    <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                      Save Changes
-                    </Button>
+                <Field data-invalid={!!form.formState.errors.category}>
+                  <FieldLabel htmlFor="category">Category</FieldLabel>
+                  <div className="relative">
+                    <select
+                      id="category"
+                      {...form.register('category')}
+                      className="w-full h-9 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 appearance-none cursor-pointer hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Choose a category</option>
+                      {categories.map((cat) => (
+                        <option key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-2.5 w-4 h-4 text-slate-500 pointer-events-none" />
                   </div>
-              </Form>
+                  <FieldError errors={form.formState.errors.category ? [form.formState.errors.category] : []} />
+                </Field>
+
+                <Field data-invalid={!!form.formState.errors.message}>
+                  <FieldLabel htmlFor="message">Message</FieldLabel>
+                  <textarea
+                    id="message"
+                    {...form.register('message')}
+                    placeholder="Type your message here."
+                    className="w-full h-20 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  />
+                  <FieldError errors={form.formState.errors.message ? [form.formState.errors.message] : []} />
+                </Field>
+
+                <div className="pt-4">
+                  <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                    Save Changes
+                  </Button>
+                </div>
+              </form>
             </div>
           </Card>
         </div>

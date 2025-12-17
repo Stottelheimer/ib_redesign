@@ -5,18 +5,11 @@ import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useForm,
-} from '@/components/ui/form'
+import { Field, FieldLabel, FieldError } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 
 const bgImage = '/36e215215297baf56b28a632dceb399ed20e4528.png'
@@ -89,72 +82,51 @@ export function Login() {
             <p className="text-base text-slate-600">Bitte geben Sie Ihre Anmeldedaten ein</p>
           </div>
 
-          <Form form={form} onSubmit={onSubmit} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="email"
-            render={({ field }) => (
-                <FormItem>
-                  <FormLabel>E-Mail</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="E-Mail" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Field data-invalid={!!form.formState.errors.email}>
+              <FieldLabel htmlFor="email">E-Mail</FieldLabel>
+              <Input
+                id="email"
+                type="email"
+                placeholder="E-Mail"
+                {...form.register('email')}
+              />
+              <FieldError errors={form.formState.errors.email ? [form.formState.errors.email] : []} />
+            </Field>
 
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <div className="relative">
-                    <FormControl>
-                      <Input
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <Field data-invalid={!!form.formState.errors.password}>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  {...form.register('password')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              <FieldError errors={form.formState.errors.password ? [form.formState.errors.password] : []} />
+            </Field>
 
             <div className="flex items-center justify-between">
-              <FormField
-                name="remember"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                        <Checkbox
-                          checked={!!field.value}
-                          onCheckedChange={(checked) => field.onChange(!!checked)}
-                        />
-                        <span>Remember log in details?</span>
-                      </label>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                <Checkbox
+                  checked={!!form.watch('remember')}
+                  onCheckedChange={(checked) => form.setValue('remember', !!checked)}
+                />
+                <span>Remember log in details?</span>
+              </label>
 
               <Link
                 href="#"
                 className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
               >
-                Forgot password?
               </Link>
             </div>
 
@@ -164,8 +136,8 @@ export function Login() {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-full transition-colors"
             >
               {isSubmitting ? 'Logging in...' : 'Log in'}
-              </Button>
-          </Form>
+            </Button>
+          </form>
 
           <div className="flex items-center justify-center gap-2 text-sm">
             <span className="text-slate-600">Don&apos;t have an account?</span>
