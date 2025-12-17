@@ -1,20 +1,43 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Sidebar } from './Sidebar';
+import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useForm,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Sidebar } from './Sidebar'
+
+const settingsSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  email: z.string().email({ message: 'Enter a valid email' }),
+  category: z.string().optional(),
+  message: z.string().optional(),
+})
 
 export function Settings() {
-  const [activeTab, setActiveTab] = useState('shop-settings');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    category: '',
-    message: '',
-  });
+  const [activeTab, setActiveTab] = useState('shop-settings')
+
+  const form = useForm<z.infer<typeof settingsSchema>>({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      category: '',
+      message: '',
+    },
+  })
 
   const tabs = [
     { id: 'shop-settings', label: 'Shopeinstellungen' },
@@ -22,34 +45,25 @@ export function Settings() {
     { id: 'payment', label: 'Zahlungsinformationen' },
     { id: 'shipping', label: 'Versandinformationen' },
     { id: 'reviews', label: 'Bewertungen' },
-  ];
+  ]
 
   const categories = [
     { value: 'general', label: 'General' },
     { value: 'technical', label: 'Technical' },
     { value: 'billing', label: 'Billing' },
     { value: 'other', label: 'Other' },
-  ];
+  ]
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-  };
+  const onSubmit = (values: z.infer<typeof settingsSchema>) => {
+    console.log('Form submitted:', values)
+  }
 
   return (
     <div className="flex h-screen bg-white">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         <div className="space-y-6 p-8">
-          {/* Header */}
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-semibold tracking-tight">Shopeinstellungen</h1>
             <div className="flex items-center gap-6">
@@ -62,9 +76,8 @@ export function Settings() {
             </div>
           </div>
 
-          {/* Tabs */}
           <div className="flex gap-2 bg-slate-100 p-1 rounded-xl w-fit">
-            {tabs.map(tab => (
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -79,99 +92,97 @@ export function Settings() {
             ))}
           </div>
 
-          {/* Form Card */}
           <Card className="w-full max-w-2xl">
             <div className="p-6 space-y-6">
-              {/* Card Header */}
               <div className="space-y-1">
                 <h2 className="text-lg font-semibold text-slate-900">Shopeinstellungen</h2>
                 <p className="text-sm text-slate-600">Text unten drunter welcher alles erklärt</p>
               </div>
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Name Field */}
-                <div className="space-y-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-slate-900">
-                    Name
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="Enter your name..."
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full"
-                  />
-                </div>
+              <Form form={form} onSubmit={onSubmit} className="space-y-4">
+                <FormField
+                  name="name"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your name..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                {/* Email Field */}
-                <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-slate-900">
-                    E-mail address
-                  </label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your e-mail address..."
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full"
-                  />
-                </div>
+                <FormField
+                  name="email"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>E-mail address</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="Enter your e-mail address..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                {/* Category Select */}
-                <div className="space-y-2">
-                  <label htmlFor="category" className="block text-sm font-medium text-slate-900">
-                    Category
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                      className="w-full h-9 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 appearance-none cursor-pointer hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Choose a category</option>
-                      {categories.map(cat => (
-                        <option key={cat.value} value={cat.value}>
-                          {cat.label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-3 top-2.5 w-4 h-4 text-slate-500 pointer-events-none" />
-                  </div>
-                </div>
+                <FormField
+                  name="category"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <div className="relative">
+                        <FormControl>
+                          <select
+                            {...field}
+                            className="w-full h-9 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 appearance-none cursor-pointer hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Choose a category</option>
+                            {categories.map((cat) => (
+                              <option key={cat.value} value={cat.value}>
+                                {cat.label}
+                              </option>
+                            ))}
+                          </select>
+                        </FormControl>
+                        <ChevronDown className="absolute right-3 top-2.5 w-4 h-4 text-slate-500 pointer-events-none" />
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                {/* Message Textarea */}
-                <div className="space-y-2">
-                  <label htmlFor="message" className="block text-sm font-medium text-slate-900">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    placeholder="Type your message here."
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    className="w-full h-20 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  />
-                </div>
+                <FormField
+                  name="message"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
+                        <textarea
+                          {...field}
+                          placeholder="Type your message here."
+                          className="w-full h-20 px-3 py-2 border border-slate-300 rounded-lg bg-white text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                {/* Submit Button */}
                 <div className="pt-4">
                   <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                     Save Changes
                   </Button>
                 </div>
-              </form>
+              </Form>
             </div>
           </Card>
         </div>
       </main>
     </div>
-  );
+  )
 }
