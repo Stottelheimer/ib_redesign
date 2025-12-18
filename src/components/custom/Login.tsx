@@ -114,21 +114,7 @@ export function Login() {
               <FieldError errors={form.formState.errors.password ? [form.formState.errors.password] : []} />
             </Field>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                <Checkbox
-                  checked={!!form.watch('remember')}
-                  onCheckedChange={(checked) => form.setValue('remember', !!checked)}
-                />
-                <span>Remember log in details?</span>
-              </label>
-
-              <Link
-                href="#"
-                className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
-              >
-              </Link>
-            </div>
+            
 
             <Button
               type="submit"
